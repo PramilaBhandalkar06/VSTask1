@@ -1,73 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>User Profile</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+<meta charset="UTF-8">
+<title>User Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        padding: 20px;
-      }
-      .card {
-        max-width: 400px;
-        background: white;
-        margin: auto;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      }
-      h2 {
-        text-align: center;
-      }
-      p {
-        margin: 8px 0;
-      }
-      .logout {
-        margin-top: 15px;
-        width: 100%;
-        padding: 10px;
-        background: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
+<style>
+* {
+    box-sizing: border-box;
+}
 
-  <body>
-    <div class="card" id="profile"></div>
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
 
-    <script>
-      const loggedEmail = localStorage.getItem("loggedInUser");
-      const users = JSON.parse(localStorage.getItem("users")) || [];
 
-      if (!loggedEmail) {
-        alert("Please login first!");
-        window.location.href = "login.html";
-      }
+.card {
+    max-width: 480px;
+    background: #ffffff;
+    margin: 40px auto;
+    padding: 25px 30px;
+    border-radius: 14px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.6s ease-in-out;
+}
 
-      const user = users.find((u) => u.email === loggedEmail);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-      if (user) {
-        document.getElementById("profile").innerHTML = `
-        <h2>Welcome ${user.fullname}</h2>
-        <p><b>Age:</b> ${user.age}</p>
-        <p><b>Phone:</b> ${user.phone}</p>
-        <p><b>Email:</b> ${user.email}</p>
-        <p><b>Address:</b> ${user.address}</p>
-        <p><b>Pincode:</b> ${user.pincode}</p>
-        <button class="logout" onclick="logout()">Logout</button>
-    `;
-      }
+.card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
 
-      function logout() {
-        localStorage.removeItem("loggedInUser");
-        window.location.href = "login.html";
-      }
-    </script>
-  </body>
+
+p {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #444;
+}
+
+p b {
+    color: #222;
+}
+
+
+input, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+textarea {
+    resize: none;
+    height: 70px;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+}
+
+
+button {
+    width: 100%;
+    padding: 11px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-update { background: #667eea; color: white; }
+.btn-password { background: #17a2b8; color: white; }
+.btn-logout { background: #dc3545; color: white; }
+
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.hidden {
+    display: none;
+}
+
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 320px;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: scaleUp 0.4s ease;
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-content h3 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.modal-content input[type="checkbox"] {
+    width: auto;
+    margin-right: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<script>
+
+let loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+if (!loggedUser) {
+    window.location.href = "login.html";
+}
+</script>
+
+<div class="card">
+
+<h2>User Profile</h2>
+<hr>
+
+<div id="viewMode">
+    <p><b>Name:</b> <span id="v_name"></span></p>
+    <p><b>Age:</b> <span id="v_age"></span></p>
+    <p><b>Phone:</b> <span id="v_phone"></span></p>
+    <p><b>Email:</b> <span id="v_email"></span></p>
+    <p><b>Address:</b> <span id="v_address"></span></p>
+    <p><b>Pincode:</b> <span id="v_pincode"></span></p>
+
+    <button class="btn-update" onclick="enableEdit()">Update Profile</button>
+    <button class="btn-password" onclick="openModal()">Change Password</button>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+</div>
+
+
+<div id="editMode" class="hidden">
+    <label for="e_name">Full Name</label>
+    <input id="e_name">
+    <label for="e_age">Age</label>
+    <input id="e_age" type="number">
+    <label for="e_phone">Phone</label>
+    <input id="e_phone">
+    <label for="e_address">Address</label>
+    <textarea id="e_address"></textarea>
+    <label for="e_pincode">Pincode</label>
+    <input id="e_pincode">
+
+    <button class="btn-update" onclick="saveChanges()">Update the Changes</button>
+</div>
+
+</div>
+
+
+<div class="modal" id="passwordModal">
+    <div class="modal-content">
+        <h3>Change Password</h3>
+        <input type="password" id="newPass" placeholder="New Password">
+        <input type="password" id="confirmPass" placeholder="Confirm Password">
+
+        <label>
+            <input type="checkbox" id="confirmCheck">
+            I confirm to change my password
+        </label>
+
+        <button class="btn-update" onclick="changePassword()">Change</button>
+        <button class="btn-logout" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script>
+
+v_name.innerText = loggedUser.fullname;
+v_age.innerText = loggedUser.age;
+v_phone.innerText = loggedUser.phone;
+v_email.innerText = loggedUser.email;
+v_address.innerText = loggedUser.address;
+v_pincode.innerText = loggedUser.pincode;
+
+
+function enableEdit() {
+    viewMode.classList.add("hidden");
+    editMode.classList.remove("hidden");
+
+    e_name.value = loggedUser.fullname;
+    e_age.value = loggedUser.age;
+    e_phone.value = loggedUser.phone;
+    e_address.value = loggedUser.address;
+    e_pincode.value = loggedUser.pincode;
+}
+
+
+function saveChanges() {
+    loggedUser.fullname = e_name.value;
+    loggedUser.age = e_age.value;
+    loggedUser.phone = e_phone.value;
+    loggedUser.address = e_address.value;
+    loggedUser.pincode = e_pincode.value;
+
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedUser));
+
+    let users = JSON.parse(localStorage.getItem("users"));
+    users = users.map(u => u.email === loggedUser.email ? loggedUser : u);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    location.reload();
+}
+
+
+function openModal() {
+    passwordModal.style.display = "flex";
+}
+
+function closeModal() {
+    passwordModal.style.display = "none";
+}
+
+function changePassword() {
+    if (!confirmCheck.checked) {
+        alert("Please confirm checkbox");
+        return;
+    }
+    if (newPass.value !== confirmPass.value) {
+        alert("Passwords do not match");
+        return;
+    }
+
+    loggedUser.password = newPass.value;
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedUser));
+
+    let users = JSON.parse(localStorage.getItem("users"));
+    users = users.map(u => u.email === loggedUser.email ? loggedUser : u);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Password updated successfully");
+    closeModal();
+}
+
+
+function logout() {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
 </html>

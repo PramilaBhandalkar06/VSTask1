@@ -1,152 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f7f7f7;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ae4b6f, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-      .container {
-        background: #fff;
-        padding: 30px 40px;
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 400px;
-      }
+        .container {
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
 
-      h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #333;
-      }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
 
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-      }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-      input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 14px;
-      }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
 
-      button {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        background: #28a745;
-        color: white;
-        font-size: 16px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-      button:hover {
-        background: #218838;
-      }
+        button:hover {
+            background: #218838;
+        }
 
-      .error {
-        color: red;
-        font-size: 14px;
-        margin-bottom: 15px;
-      }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
 
-      .link {
-        text-align: center;
-        margin-top: 10px;
-      }
+        .link {
+            text-align: center;
+            margin-top: 10px;
+        }
 
-      .link a {
-        text-decoration: none;
-        color: #007bff;
-      }
+        .link a {
+            text-decoration: none;
+            color: #007BFF;
+        }
 
-      .link a:hover {
-        text-decoration: underline;
-      }
+        .link a:hover {
+            text-decoration: underline;
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Login</h2>
-      <form id="loginForm">
+</head>
+<body>
+
+<div class="container">
+    <h2>Login</h2>
+    <form id="loginForm">
         <div class="error" id="errorMsg"></div>
 
         <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter your email"
-          required
-        />
+        <input type="email" id="email" placeholder="Enter your email" required>
 
         <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="Enter your password"
-          required
-        />
+        <input type="password" id="password" placeholder="Enter your password" required>
 
         <button type="submit">Login</button>
-      </form>
-      <div class="link">
+    </form>
+    <div class="link">
         Don't have an account? <a href="register.html">Register here</a>
-      </div>
     </div>
+</div>
 
-    <script>
-      // Prefill email if registration stored it
-      (function () {
-        const prefill = localStorage.getItem("prefillEmail");
-        if (prefill) {
-          const emailInput = document.getElementById("email");
-          if (emailInput) emailInput.value = prefill;
-          // remove the prefill key so it doesn't persist
-          localStorage.removeItem("prefillEmail");
-        }
-      })();
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
 
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
+    const users = JSON.parse(localStorage.getItem('users')) || [];
 
-          const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find(u => u.email === email && u.password === password);
 
-          const user = users.find(
-            (u) => u.email === email && u.password === password
-          );
+    if(user){
+        // STORE FULL USER OBJECT
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
 
-          if (user) {
-            localStorage.setItem("loggedInUser", user.email);
-            alert(`Welcome ${user.fullname}! Login successful.`);
-            // Redirect to home page
-            window.location.href = "userFile.html";
-          } else {
-            document.getElementById("errorMsg").textContent =
-              "Invalid email or password!";
-          }
-        });
-    </script>
-  </body>
+        alert("Login successful!");
+        window.location.href = "userFile.html";
+    } else {
+        document.getElementById('errorMsg').textContent = "Invalid email or password!";
+    }
+});
+</script>
+
+</body>
 </html>
