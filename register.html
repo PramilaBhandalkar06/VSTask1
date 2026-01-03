@@ -146,7 +146,7 @@
         <button type="submit">Register</button>
       </form>
       <div class="link">
-        Already have an account? <a href="login.html">Login here</a>
+        Already have an account? <a href="Index.html">Login here</a>
       </div>
     </div>
 
@@ -184,12 +184,12 @@
 
           localStorage.setItem("users", JSON.stringify(users));
 
-          // Save email to prefill on login page
+          
           localStorage.setItem('prefillEmail', email);
 
           alert("Registration successful!");
 
-          window.location.href = "login.html";
+          window.location.href = "Index.html";
         });
     </script>
   </body>

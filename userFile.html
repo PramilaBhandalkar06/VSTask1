@@ -153,7 +153,7 @@ button:hover {
 
 let loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
 if (!loggedUser) {
-    window.location.href = "login.html";
+    window.location.href = "Index.html";
 }
 </script>
 
@@ -281,7 +281,7 @@ function changePassword() {
 
 function logout() {
     localStorage.removeItem("loggedInUser");
-    window.location.href = "login.html";
+    window.location.href = "Index.html";
 }
 </script>
 
