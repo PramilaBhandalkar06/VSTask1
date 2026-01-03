@@ -184,6 +184,9 @@
 
           localStorage.setItem("users", JSON.stringify(users));
 
+          // Save email to prefill on login page
+          localStorage.setItem('prefillEmail', email);
+
           alert("Registration successful!");
 
           window.location.href = "login.html";

@@ -112,6 +112,17 @@
     </div>
 
     <script>
+      // Prefill email if registration stored it
+      (function () {
+        const prefill = localStorage.getItem("prefillEmail");
+        if (prefill) {
+          const emailInput = document.getElementById("email");
+          if (emailInput) emailInput.value = prefill;
+          // remove the prefill key so it doesn't persist
+          localStorage.removeItem("prefillEmail");
+        }
+      })();
+
       document
         .getElementById("loginForm")
         .addEventListener("submit", function (e) {
@@ -127,7 +138,7 @@
           );
 
           if (user) {
-            localStorage.setItem('loggedInUser', user.email);
+            localStorage.setItem("loggedInUser", user.email);
             alert(`Welcome ${user.fullname}! Login successful.`);
             // Redirect to home page
             window.location.href = "userFile.html";
