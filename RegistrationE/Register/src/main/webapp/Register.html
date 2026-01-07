@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration</title>
+</head>
+<body>
+    <h2>User Registration</h2>
+
+    <!-- Message area -->
+    <div id="message" style="color: green; font-weight: bold;"></div>
+
+    <form action="RegisterServlet" method="post">
+    
+        <label>Name:</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <input type="submit" value="Register">
+    </form>
+
+    <script>
+        // Show message if redirected with status parameter
+        const params = new URLSearchParams(window.location.search);
+        const status = params.get('status');
+        const messageDiv = document.getElementById('message');
+
+        if(status === 'success') {
+            messageDiv.textContent = "Registration Successful!";
+            messageDiv.style.color = "green";
+        } else if(status === 'failure') {
+            messageDiv.textContent = "Registration Failed! Try again.";
+            messageDiv.style.color = "red";
+        }
+    </script>
+</body>
+</html>
